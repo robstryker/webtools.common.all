@@ -2,21 +2,13 @@ package org.eclipse.wst.common.frameworks.componentcore.tests;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.wst.common.componentcore.ComponentCore;
 import org.eclipse.wst.common.componentcore.UnresolveableURIException;
-import org.eclipse.wst.common.componentcore.internal.ComponentcoreFactory;
-import org.eclipse.wst.common.componentcore.internal.Property;
 import org.eclipse.wst.common.componentcore.internal.StructureEdit;
 import org.eclipse.wst.common.componentcore.internal.WorkbenchComponent;
 import org.eclipse.wst.common.frameworks.componentcore.virtualpath.tests.TestWorkspace;
@@ -282,59 +274,6 @@ public class StructureEditAPITest extends TestCase {
 			assertNotNull(moduleCore);
 
 		}
-	}
-
-	public void testMultiThreadAccess() {
-		
-		Job[] testJobs = new Job[50];
-		for (int i = 0; i < testJobs.length; i++) {
-			Job job = new Job("Job " + i)
-		      {
-		        
-		        protected IStatus run(IProgressMonitor monitor)
-		        {
-		        StructureEdit moduleCore = null;
-		          try
-		          {
-		        	moduleCore = StructureEdit.getStructureEditForWrite(project);
-		        	Property prop = ComponentcoreFactory.eINSTANCE.createProperty();
-		        	prop.setName("Job " + System.currentTimeMillis());
-		        	prop.setValue("Blah");
-		      		moduleCore.getComponent().getProperties().add(prop);
-		      		System.out.println(prop.getName());
-		      		moduleCore.saveIfNecessary(null);
-		          }
-		          catch (Exception e)
-		          {
-		        	  e.printStackTrace();
-		        	  return Status.CANCEL_STATUS;
-		          }
-		          finally {
-		        	  if (moduleCore != null)
-		        		  moduleCore.dispose();
-		          }
-		          return Status.OK_STATUS;
-		        }
-		        public boolean belongsTo(Object family) {
-					return EDITMODEL_STRESS.equals(family);
-				}
-		      };
-			testJobs[i] = job;	
-			}
-		for (int j = 0; j < testJobs.length; j++) {
-			Job job = testJobs[j];
-			job.schedule();
-		}
-		try {
-			JobManager.getInstance().join(EDITMODEL_STRESS,null);
-		} catch (OperationCanceledException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 	}
 
 	public void testPrepareProjectComponentsIfNecessary() {
