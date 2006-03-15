@@ -52,10 +52,10 @@
          </documentation>
       </annotation>
       <complexType>
-         <all>
+         <sequence>
             <element ref="version-comparator" minOccurs="0" maxOccurs="1"/>
             <element ref="icon" minOccurs="0" maxOccurs="1"/>
-         </all>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -122,11 +122,11 @@
          </documentation>
       </annotation>
       <complexType>
-         <all>
+         <sequence>
             <element ref="runtime-component"/>
             <element ref="factory"/>
             <element ref="type"/>
-         </all>
+         </sequence>
       </complexType>
    </element>
 
@@ -154,7 +154,7 @@
          <attribute name="any" type="string">
             <annotation>
                <documentation>
-                  Used to indicate that all runtime component types and versions should be matched. If this attribute is used, the &lt;code&gt;id&lt;/code&gt;, &lt;code&gt;version&lt;/code&gt;, and &lt;code&gt;allow-newer&lt;/code&gt; attributes should not be used.
+                  Used to indicate that all runtime component types and versions should be matched. If this attribute is used, the &lt;code&gt;id&lt;/code&gt; and &lt;code&gt;version&lt;/code&gt; attributes should not be used. Note that this attribute can only be used when the &lt;code&gt;runtime-component&lt;/code&gt; element appears beneath the &lt;code&gt;supported&lt;/code&gt; element.
                </documentation>
             </annotation>
          </attribute>
