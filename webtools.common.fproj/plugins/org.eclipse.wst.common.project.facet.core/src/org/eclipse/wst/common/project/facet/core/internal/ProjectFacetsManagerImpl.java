@@ -781,22 +781,6 @@ public final class ProjectFacetsManagerImpl
                         i++;
                     }
                 }
-                else if( type == Action.Type.VERSION_CHANGE )
-                {
-                    final HashSet copy = new HashSet( state );
-                    apply( state, action );
-                    
-                    if( ! constraint.check( copy, true ).isOK() &&
-                        constraint.check( fnl, true ).isOK() )
-                    {
-                        moveToEnd( actions, i );
-                    }
-                    else
-                    {
-                        state = copy;
-                        i++;
-                    }
-                }
                 else
                 {
                     if( constraint.check( state ).isOK() &&
