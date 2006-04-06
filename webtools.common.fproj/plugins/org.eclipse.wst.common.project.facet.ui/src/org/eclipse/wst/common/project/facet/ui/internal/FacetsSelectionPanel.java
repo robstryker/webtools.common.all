@@ -249,7 +249,7 @@ public final class FacetsSelectionPanel
         );
 
         this.presetsLabel = new Label( this.topComposite, SWT.NONE );
-        this.presetsLabel.setText( "Presets: " );
+        this.presetsLabel.setText( Resources.presets );
         
         this.presetsCombo = new Combo( this.topComposite, SWT.READ_ONLY );
         this.presetsCombo.setLayoutData( gdhfill() );
@@ -266,7 +266,7 @@ public final class FacetsSelectionPanel
         );
         
         this.savePresetButton = new Button( this.topComposite, SWT.PUSH );
-        this.savePresetButton.setText( "Save" );
+        this.savePresetButton.setText( Resources.save );
         this.savePresetButton.setLayoutData( whint( new GridData(), 60 ) );
         
         this.savePresetButton.addSelectionListener
@@ -281,7 +281,7 @@ public final class FacetsSelectionPanel
         );
 
         this.deletePresetButton = new Button( this.topComposite, SWT.PUSH );
-        this.deletePresetButton.setText( "Delete" );
+        this.deletePresetButton.setText( Resources.delete );
         this.deletePresetButton.setLayoutData( whint( new GridData(), 60 ) );
         
         this.deletePresetButton.addSelectionListener
@@ -319,7 +319,7 @@ public final class FacetsSelectionPanel
         this.tree.setSorter( new Sorter() );
         
         this.colFacet = new TreeColumn( this.tree.getTree(), SWT.NONE );
-        this.colFacet.setText( "Project Facet" );
+        this.colFacet.setText( Resources.projectFacet );
         this.colFacet.setWidth( this.settings.getInt( CW_FACET ) );
         this.colFacet.setResizable( true );
         
@@ -336,7 +336,7 @@ public final class FacetsSelectionPanel
         );
 
         this.colVersion = new TreeColumn( this.tree.getTree(), SWT.NONE );
-        this.colVersion.setText( "Version" );
+        this.colVersion.setText( Resources.version );
         this.colVersion.setWidth( this.settings.getInt( CW_VERSION ) );
         this.colVersion.setResizable( true );
 
@@ -354,7 +354,7 @@ public final class FacetsSelectionPanel
 
         this.popupMenu = new Menu( getShell(), SWT.POP_UP );
         this.popupMenuConstraints = new MenuItem( this.popupMenu, SWT.PUSH );
-        this.popupMenuConstraints.setText( "Show Constraints..." );
+        this.popupMenuConstraints.setText( Resources.showConstraints );
         
         this.popupMenuConstraints.addSelectionListener
         (
@@ -1168,7 +1168,7 @@ public final class FacetsSelectionPanel
             }
         );
         
-        this.presetsCombo.add( "<custom>" );
+        this.presetsCombo.add( Resources.custom );
         
         for( Iterator itr = this.presets.iterator(); itr.hasNext(); )
         {
@@ -1391,8 +1391,8 @@ public final class FacetsSelectionPanel
     private void handleSavePreset()
     {
         final InputDialog dialog 
-            = new InputDialog( getShell(), "Save Preset", 
-                               "Enter the name for the preset.",
+            = new InputDialog( getShell(), Resources.savePreset, 
+                               Resources.enterPresetName,
                                null, null );
         
         if( dialog.open() == IDialogConstants.OK_ID )
@@ -2005,6 +2005,15 @@ public final class FacetsSelectionPanel
     {
         public static String showRuntimes;
         public static String hideRuntimes;
+        public static String presets;
+        public static String save;
+        public static String delete;
+        public static String projectFacet;
+        public static String version;
+        public static String showConstraints;
+        public static String savePreset;
+        public static String enterPresetName;
+        public static String custom;
         
         static
         {
