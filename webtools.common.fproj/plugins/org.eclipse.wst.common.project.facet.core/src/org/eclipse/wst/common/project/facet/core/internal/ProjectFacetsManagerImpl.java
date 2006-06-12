@@ -11,6 +11,8 @@
 
 package org.eclipse.wst.common.project.facet.core.internal;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -103,6 +105,41 @@ public final class ProjectFacetsManagerImpl
     
     public ProjectFacetsManagerImpl()
     {
+        long activationStart = 0;
+        
+        if( FacetCorePlugin.isTracingFrameworkActivation() )
+        {
+            final StringWriter sw = new StringWriter();
+            final PrintWriter pw = new PrintWriter( sw );
+            ( new Throwable() ).printStackTrace( pw );
+            
+            String context = sw.getBuffer().toString();
+            final int endOfFirstLine = context.indexOf( '\n' );
+            context = context.substring( endOfFirstLine + 1 );
+            context = context.replaceAll( "\\t", "  " ); //$NON-NLS-1$ //$NON-NLS-2$
+            
+            int length = context.length();
+            
+            if( context.charAt( length - 2 ) == '\r' )
+            {
+                length = length - 2;
+            }
+            else
+            {
+                length = length - 1;
+            }
+            
+            context = context.substring( 0, length );
+            
+            final String msg 
+                = NLS.bind( Resources.tracingFrameworkActivationStarting, 
+                            context ); 
+            
+            System.out.println( msg );
+            
+            activationStart = System.currentTimeMillis();
+        }
+        
         this.facets = new IndexedSet();
         this.actions = new IndexedSet();
         this.categories = new IndexedSet();
@@ -117,6 +154,18 @@ public final class ProjectFacetsManagerImpl
         final IWorkspace ws = ResourcesPlugin.getWorkspace();
         final IResourceChangeListener ls = new ResourceChangeListener();
         ws.addResourceChangeListener( ls, IResourceChangeEvent.POST_CHANGE );
+        
+        if( FacetCorePlugin.isTracingFrameworkActivation() )
+        {
+            final long duration 
+                = System.currentTimeMillis() - activationStart;
+            
+            final String msg
+                = NLS.bind( Resources.tracingFrameworkActivationFinished, 
+                            String.valueOf( duration ) );
+            
+            System.out.println( msg );
+        }
     }
     
     public Set getProjectFacets()
@@ -2208,6 +2257,8 @@ public final class ProjectFacetsManagerImpl
         public static String invalidConflictsConstraint;
         public static String deprecatedRuntimeChangedAction;
         public static String tracingActionSorting;
+        public static String tracingFrameworkActivationStarting;
+        public static String tracingFrameworkActivationFinished;
         public static String unknownProperty;
         public static String propertyNotApplicable;
         
