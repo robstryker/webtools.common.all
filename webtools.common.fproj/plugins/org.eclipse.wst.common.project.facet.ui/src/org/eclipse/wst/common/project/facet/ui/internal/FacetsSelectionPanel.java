@@ -878,7 +878,12 @@ public final class FacetsSelectionPanel
         refreshPresetsCombo();
         refreshVersionsDropDown();
     }
-
+    
+    public boolean setFocus()
+    {
+        return this.tree.getTree().setFocus();
+    }
+    
     public void addProjectFacetsListener( final Listener listener )
     {
         this.listeners.add( listener );
