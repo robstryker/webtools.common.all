@@ -2009,6 +2009,11 @@ public final class ProjectFacetsManagerImpl
             preset.setDescription( "" ); //$NON-NLS-1$
         }
         
+        if( preset.getLabel() == null )
+        {
+            preset.setLabel( preset.getId() );
+        }
+        
         this.presets.add( id, preset );
     }
     
