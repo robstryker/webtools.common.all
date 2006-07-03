@@ -475,12 +475,14 @@ public final class ProjectFacetsManagerImpl
     {
         if( monitor != null )
         {
-            monitor.beginTask( "", 2 ); //$NON-NLS-1$
+            monitor.beginTask( "", 1 ); //$NON-NLS-1$
         }
         
         try
         {
-            if( project.exists() && convertIfNecessary )
+            if( project.isAccessible() &&
+                ! project.isNatureEnabled( FacetedProjectNature.NATURE_ID ) && 
+                convertIfNecessary )
             {
                 IProjectDescription description = project.getDescription();
                 String[] prevNatures = description.getNatureIds();
@@ -491,8 +493,6 @@ public final class ProjectFacetsManagerImpl
                 
                 project.setDescription( description, submon( monitor, 1 ) );
             }
-            
-            project.open( IResource.BACKGROUND_REFRESH, submon( monitor, 1 ) );
             
             return create( project );
         }
@@ -1213,6 +1213,16 @@ public final class ProjectFacetsManagerImpl
             }
         }
         
+        if( category.getLabel() == null )
+        {
+            category.setLabel( category.getId() );
+        }
+        
+        if( category.getDescription() == null )
+        {
+            category.setDescription( "" ); //$NON-NLS-1$
+        }
+        
         this.categories.add( id, category );
     }
     
@@ -1284,6 +1294,11 @@ public final class ProjectFacetsManagerImpl
         if( descriptor.getLabel() == null )
         {
             descriptor.setLabel( id );
+        }
+        
+        if( descriptor.getDescription() == null )
+        {
+            descriptor.setDescription( "" ); //$NON-NLS-1$
         }
         
         this.facets.add( id, descriptor );
@@ -2004,14 +2019,14 @@ public final class ProjectFacetsManagerImpl
             }
         }
         
-        if( preset.getDescription() == null )
-        {
-            preset.setDescription( "" ); //$NON-NLS-1$
-        }
-        
         if( preset.getLabel() == null )
         {
             preset.setLabel( preset.getId() );
+        }
+        
+        if( preset.getDescription() == null )
+        {
+            preset.setDescription( "" ); //$NON-NLS-1$
         }
         
         this.presets.add( id, preset );

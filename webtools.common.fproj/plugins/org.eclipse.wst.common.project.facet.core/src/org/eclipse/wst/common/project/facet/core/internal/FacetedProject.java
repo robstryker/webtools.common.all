@@ -124,7 +124,7 @@ public final class FacetedProject
     private final CopyOnWriteSet targetedRuntimes;
     private String primaryRuntime;
     IFile f;
-    private long fLastModified = -1;
+    private long fModificationStamp = -1;
     private final List listeners;
     private final Object lock = new Object();
     private boolean isBeingModified = false;
@@ -1383,7 +1383,7 @@ public final class FacetedProject
             this.f.create( in, true, null );
         }
         
-        this.fLastModified = this.f.getLocation().toFile().lastModified();
+        this.fModificationStamp = this.f.getModificationStamp();
     }
 
     public void refresh()
@@ -1399,7 +1399,7 @@ public final class FacetedProject
             }
             
             if( this.f.exists() && 
-                this.f.getLocation().toFile().lastModified() == this.fLastModified )
+                this.f.getModificationStamp() == this.fModificationStamp )
             {
                 return;
             }
@@ -1416,11 +1416,11 @@ public final class FacetedProject
                 
                 if( ! this.f.exists() )
                 {
-                    this.fLastModified = -1;
+                    this.fModificationStamp = -1;
                     return;
                 }
                 
-                this.fLastModified = this.f.getLocation().toFile().lastModified();
+                this.fModificationStamp = this.f.getModificationStamp();
                 
                 final Element root = parse( this.f.getLocation().toFile() );
                 final Element[] elements = children( root );
