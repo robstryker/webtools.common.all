@@ -446,8 +446,6 @@ public final class RuntimesPanel
         final Set untargetable = new HashSet( this.model.getAllRuntimes() );
         untargetable.removeAll( this.model.getTargetableRuntimes() );
         
-        this.runtimes.setGrayedElements( untargetable.toArray() );
-
         this.runtimes.setCheckedElements( this.model.getTargetedRuntimes().toArray() );
     }
     
@@ -553,8 +551,6 @@ public final class RuntimesPanel
 
             if( getDataModel().getTargetableRuntimes().contains( r ) )
             {
-                RuntimesPanel.this.runtimes.setGrayed( r, false );
-                
                 if( RuntimesPanel.this.model.getTargetedRuntimes().contains( r ) )
                 {
                     RuntimesPanel.this.runtimes.setChecked( r, true );
@@ -568,7 +564,6 @@ public final class RuntimesPanel
             }
             else
             {
-                RuntimesPanel.this.runtimes.setGrayed( r, true );
                 RuntimesPanel.this.runtimes.setChecked( r, false );
                 
                 final String greyedId = rct.getId() + "##greyed##"; //$NON-NLS-1$
