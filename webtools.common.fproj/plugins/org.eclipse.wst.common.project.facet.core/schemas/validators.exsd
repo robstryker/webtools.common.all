@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.wst.common.project.facet.core" id="validators" name="Faceted Project Validators Extension Point"/>
       </appInfo>
       <documentation>
-         Used for declaring faceted project validators. 
+         Used for declaring faceted project validators.
       </documentation>
    </annotation>
 
