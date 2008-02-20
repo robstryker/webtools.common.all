@@ -32,7 +32,6 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
@@ -716,7 +715,7 @@ public final class FacetedProjectFrameworkImpl
             desc.setLocation( location );
                     
             project.create( desc, submon( monitor, 1 ) );
-            project.open( IResource.BACKGROUND_REFRESH, submon( monitor, 1 ) );
+            project.open( submon( monitor, 1 ) );
             
             // This is odd, but apparently nature's configure() method will only
             // be called if the setDescription() method is used. It will not be
@@ -2151,13 +2150,22 @@ public final class FacetedProjectFrameworkImpl
             }
             else if( fid != null )
             {
-                final IProjectFacet f;
+                if( ! isProjectFacetDefined( fid ) )
+                {
+                    final String msg
+                        = NLS.bind( Resources.facetNotDefined, fid ) +
+                          NLS.bind( Resources.usedInPlugin, pluginId );
+                    
+                    FacetCorePlugin.logError( msg, true );
+                    return null;
+                }
+                
+                final IProjectFacet f = getProjectFacet( fid );
+
                 VersionExpr vexpr = null;
                 
                 try
                 {
-                    f = getProjectFacet( fid );
-                    
                     if( vexprstr == null || vexprstr.trim().length() == 0 )
                     {
                         vexprstr = IVersionExpr.WILDCARD_SYMBOL;
@@ -2289,6 +2297,26 @@ public final class FacetedProjectFrameworkImpl
             
             synchronized( FacetedProjectFrameworkImpl.this.projects )
             {
+                for( IResourceDelta subdelta : delta.getAffectedChildren( IResourceDelta.REMOVED ) )
+                {
+                    final String pjname = subdelta.getFullPath().segment( 0 );
+                    
+                    final IFacetedProject fpj 
+                        = FacetedProjectFrameworkImpl.this.projects.remove( pjname );
+                    
+                    if( fpj != null )
+                    {
+                        try
+                        {
+                            ( (FacetedProject) fpj ).markDeleted();
+                        }
+                        catch( CoreException e )
+                        {
+                            FacetCorePlugin.log( e );
+                        }
+                    }
+                }
+                
                 for( FacetedProject fproj : FacetedProjectFrameworkImpl.this.projects.values() )
                 {
                     final IResourceDelta subdelta = delta.findMember( fproj.f.getFullPath() );
