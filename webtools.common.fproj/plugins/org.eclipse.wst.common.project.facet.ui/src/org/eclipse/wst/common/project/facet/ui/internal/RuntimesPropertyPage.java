@@ -152,7 +152,7 @@ public class RuntimesPropertyPage extends PropertyPage
         final Set<IRuntime> targeted = this.fpjwc.getTargetedRuntimes();
         final IRuntime primary = this.fpjwc.getPrimaryRuntime();
         
-        if( ! this.project.getTargetedRuntimes().equals( targeted ) ||
+        if( ! this.project.getTargetedRuntimes().equals( primary ) ||
             ! equals( this.project.getPrimaryRuntime(), primary ) )
         {
             final IWorkspaceRunnable wr = new IWorkspaceRunnable()

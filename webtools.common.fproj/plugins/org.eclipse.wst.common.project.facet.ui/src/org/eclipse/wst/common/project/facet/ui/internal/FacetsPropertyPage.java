@@ -185,21 +185,16 @@ public final class FacetsPropertyPage
             }
         };
 
-        boolean failed = false;
-        
         try 
         {
         	new ProgressMonitorDialog( getShell() ).run( true, false, op );
         }
         catch( InterruptedException e ) 
         {
-            failed = true;
             return false;
         } 
         catch( InvocationTargetException e ) 
         {
-            failed = true;
-            
             final Throwable te = e.getTargetException();
             
             if( te instanceof CoreException )
@@ -213,21 +208,7 @@ public final class FacetsPropertyPage
             }
             else
             {
-                throw new RuntimeException( te );
-            }
-        }
-        finally
-        {
-            if( failed )
-            {
-                try
-                {
-                    this.fpjwc.revertChanges();
-                }
-                catch( Exception e )
-                {
-                    FacetUiPlugin.log( e );
-                }
+                throw new RuntimeException( e.getTargetException() );
             }
         }
         

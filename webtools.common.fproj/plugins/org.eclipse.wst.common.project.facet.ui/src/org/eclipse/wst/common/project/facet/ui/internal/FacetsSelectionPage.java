@@ -111,7 +111,7 @@ public final class FacetsSelectionPage
                 }
             };
             
-            this.panel.getDisplay().asyncExec( uiRunnable );
+            this.panel.getDisplay().syncExec( uiRunnable );
             return;
         }
 
