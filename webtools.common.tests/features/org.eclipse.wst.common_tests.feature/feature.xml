@@ -23,6 +23,7 @@
 
    <requires>
       <import feature="org.eclipse.wst.common_ui.feature" version="3.0.0"/>
+      <import feature="org.eclipse.wst.common_core.feature" version="3.0.0"/>
    </requires>
 
    <plugin
