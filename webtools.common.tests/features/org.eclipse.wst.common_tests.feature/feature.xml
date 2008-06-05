@@ -24,6 +24,8 @@
    <requires>
       <import feature="org.eclipse.wst.common_ui.feature" version="3.0.0"/>
       <import feature="org.eclipse.wst.common_core.feature" version="3.0.0"/>
+      <import feature="org.eclipse.platform" version="3.4.0"/>
+      <import feature="org.eclipse.test" version="3.3.0"/>
    </requires>
 
    <plugin
