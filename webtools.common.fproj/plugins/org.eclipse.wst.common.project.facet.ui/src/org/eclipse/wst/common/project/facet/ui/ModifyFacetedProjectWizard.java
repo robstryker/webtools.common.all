@@ -166,7 +166,7 @@ public class ModifyFacetedProjectWizard
                     }
                 };
                 
-                Display.getDefault().syncExec( runnable );
+                Display.getDefault().asyncExec( runnable );
             }
         };
 
