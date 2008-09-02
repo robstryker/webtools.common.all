@@ -132,6 +132,7 @@ public final class FacetedProject
     private static final String ATTR_NAME = "name"; //$NON-NLS-1$
     private static final String ATTR_FACET = "facet"; //$NON-NLS-1$
     private static final String ATTR_VERSION = "version"; //$NON-NLS-1$
+    private static final String DEFAULT_UNKNOWN_VERSION = "0.0"; //$NON-NLS-1$
 
     private final IProject project;
     private final Set<IProjectFacetVersion> facets;
@@ -1739,6 +1740,7 @@ public final class FacetedProject
             f = new ProjectFacet();
             f.setId( id );
             f.setLabel( id );
+            f.setDefaultVersion(createUnknownFacetVersion(f, DEFAULT_UNKNOWN_VERSION));
             
             this.unknownFacets.put( id, f );
         }
