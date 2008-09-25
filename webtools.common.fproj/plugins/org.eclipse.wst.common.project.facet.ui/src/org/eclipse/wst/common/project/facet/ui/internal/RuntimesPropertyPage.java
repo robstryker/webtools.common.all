@@ -14,12 +14,14 @@ package org.eclipse.wst.common.project.facet.ui.internal;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -43,6 +45,7 @@ import org.eclipse.wst.common.project.facet.core.IFacetedProject;
 import org.eclipse.wst.common.project.facet.core.IFacetedProjectListener;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
+import org.eclipse.wst.common.project.facet.core.internal.CopyOnWriteSet;
 import org.eclipse.wst.common.project.facet.core.runtime.IRuntime;
 import org.eclipse.wst.common.project.facet.ui.AddRemoveFacetsWizard;
 
@@ -56,6 +59,9 @@ public class RuntimesPropertyPage extends PropertyPage
     private IFacetedProjectListener projectListener;
     private ChangeTargetedRuntimesDataModel model;
     private RuntimesPanel panel;
+    
+    private IFile[] validateEditFiles;
+   
     
     protected Control createContents( final Composite parent ) 
     {
@@ -174,7 +180,8 @@ public class RuntimesPropertyPage extends PropertyPage
     
     public boolean performOk() 
     {
-        final Set targeted = this.model.getTargetedRuntimes();
+        final Set targeted = new CopyOnWriteSet();
+        targeted.addAll(this.model.getTargetedRuntimes());
         final IRuntime primary = this.model.getPrimaryRuntime();
         
         if( ! this.project.getTargetedRuntimes().equals( primary ) ||
@@ -207,7 +214,10 @@ public class RuntimesPropertyPage extends PropertyPage
                     
                     try
                     {
-                        ws.run( wr, ws.getRoot(), IWorkspace.AVOID_UPDATE, null );
+                    	
+                    	if(validateEdit()) {
+                    		ws.run( wr, ws.getRoot(), IWorkspace.AVOID_UPDATE, null );
+                    	}
                     }
                     catch( CoreException e )
                     {
@@ -300,5 +310,21 @@ public class RuntimesPropertyPage extends PropertyPage
                                 Resources.class );
         }
     }
+    
+	private boolean validateEdit() {
+		if(this.validateEditFiles == null || this.validateEditFiles.length == 0) {
+			this.validateEditFiles = new IFile[3];
+			this.validateEditFiles[0] = this.project.getProject().getFile(".classpath"); //$NON-NLS-1$
+			this.validateEditFiles[1] = this.project.getProject().getFile(".settings" + IPath.SEPARATOR + "org.eclipse.wst.common.project.facet.core.xml"); //$NON-NLS-1$ //$NON-NLS-2$
+			this.validateEditFiles[2] = this.project.getProject().getFile(".settings" + IPath.SEPARATOR + "org.eclipse.jst.common.project.facet.core.prefs"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(this.validateEditFiles, getShell());
+		
+		if(!status.isOK()) {
+			ErrorDialog.openError( getShell(), Resources.errDlgTitle, status.getMessage(), status );
+		}
+		
+		return status.isOK();
+	}
 
 }
