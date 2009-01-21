@@ -62,6 +62,8 @@ public class TestSuite7 extends TestCase {
 	public void testClean() throws CoreException, UnsupportedEncodingException, InterruptedException {
 		Tracing.log("TestSuite7-01: testClean starting");
 		IProgressMonitor monitor = new NullProgressMonitor();	
+		_env.turnOnAutoBuild();
+		_env.cleanBuild(monitor);
 		T7A.resetList();
 		
 		_env.cleanBuild(monitor);
