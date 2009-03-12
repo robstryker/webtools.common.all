@@ -89,7 +89,7 @@ public abstract class Versionable<T extends IVersion>
     {
         if( this.versions.size() > 0 )
         {
-            return Collections.max( this.versions );
+            return (T) Collections.max( this.versions );
         }
         else
         {
