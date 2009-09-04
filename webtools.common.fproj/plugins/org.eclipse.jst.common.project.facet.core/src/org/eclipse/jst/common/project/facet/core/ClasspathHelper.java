@@ -33,6 +33,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jst.common.project.facet.core.internal.FacetCorePlugin;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.wst.common.project.facet.core.IFacetedProject;
+import org.eclipse.wst.common.project.facet.core.IProjectFacet;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
 import org.eclipse.wst.common.project.facet.core.runtime.IRuntime;
@@ -247,6 +248,7 @@ public final class ClasspathHelper
         {
             final IJavaProject jproj = JavaCore.create( project );
             final List cp = getClasspath( jproj );
+            final IProjectFacet facet = fv.getProjectFacet();
             boolean cpchanged = false;
 
             final Map prefs = readPreferences( project );
@@ -255,30 +257,40 @@ public final class ClasspathHelper
             {
                 final Map.Entry entry = (Map.Entry) itr1.next();
                 final IPath path = (IPath) entry.getKey();
-                final Set owners = (Set) entry.getValue();
-                
-                if( owners.contains( fv ) )
-                {
-                    owners.remove( fv );
-                    
-                    if( owners.size() == 0 )
-                    {
-                        itr1.remove();
-                        
-                        for( Iterator itr2 = cp.iterator(); itr2.hasNext(); )
-                        {
-                            final IClasspathEntry cpentry
-                                = (IClasspathEntry) itr2.next();
-                            
-                            if( cpentry.getPath().equals( path ) )
-                            {
-                                itr2.remove();
-                                cpchanged = true;
-                                break;
-                            }
-                        }
-                    }
-                }
+                final Set<IProjectFacetVersion> owners = (Set<IProjectFacetVersion>) entry.getValue();
+	            IProjectFacetVersion foundVersion = null;
+	            boolean found = false;
+	            
+	            for (IProjectFacetVersion anOwner : owners) {
+	            	if(anOwner.getProjectFacet().equals(facet)) {
+	            		foundVersion = anOwner;
+	            		found = true;
+	            		break;
+	            	}
+				}
+	            
+	            if( found )
+	            {
+	                owners.remove( foundVersion );
+	                
+	                if( owners.size() == 0 )
+	                {
+	                    itr1.remove();
+	                    
+	                    for( Iterator itr2 = cp.iterator(); itr2.hasNext(); )
+	                    {
+	                        final IClasspathEntry cpentry
+	                            = (IClasspathEntry) itr2.next();
+	                        
+	                        if( cpentry.getPath().equals( path ) )
+	                        {
+	                            itr2.remove();
+	                            cpchanged = true;
+	                            break;
+	                        }
+	                    }
+	                }
+	            }
             }
 
             if( cpchanged )
