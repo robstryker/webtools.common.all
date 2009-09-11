@@ -238,77 +238,104 @@ public final class ClasspathHelper
      * @throws CoreException if failed while removing classpath entries
      */
     
-    public static void removeClasspathEntries( final IProject project,
-                                               final IProjectFacetVersion fv )
-    
-        throws CoreException
-        
-    {
-        try
-        {
-            final IJavaProject jproj = JavaCore.create( project );
-            final List cp = getClasspath( jproj );
-            final IProjectFacet facet = fv.getProjectFacet();
-            boolean cpchanged = false;
+    public static void removeClasspathEntries(final IProject project, final IProjectFacetVersion fv)
 
-            final Map prefs = readPreferences( project );
-            
-            for( Iterator itr1 = prefs.entrySet().iterator(); itr1.hasNext(); )
-            {
-                final Map.Entry entry = (Map.Entry) itr1.next();
-                final IPath path = (IPath) entry.getKey();
-                final Set<IProjectFacetVersion> owners = (Set<IProjectFacetVersion>) entry.getValue();
-	            IProjectFacetVersion foundVersion = null;
-	            boolean found = false;
-	            
-	            for (IProjectFacetVersion anOwner : owners) {
-	            	if(anOwner.getProjectFacet().equals(facet)) {
-	            		foundVersion = anOwner;
-	            		found = true;
-	            		break;
-	            	}
+	throws CoreException
+
+	{
+		try {
+			final IJavaProject jproj = JavaCore.create(project);
+			final List cp = getClasspath(jproj);
+			final IProjectFacet facet = fv.getProjectFacet();
+			boolean cpchanged = false;
+
+			Map prefs = readPreferences(project);
+			
+			// In the case where no prefs exists... make sure the entries of the
+			// runtime are removed before continuing
+			if (prefs.isEmpty()) {
+				IFacetedProject fproj = ProjectFacetsManager.create(project);
+				IRuntime runtime = fproj.getPrimaryRuntime();
+				removeOnlyCPEntries(project, fv, jproj, cp, runtime);
+			}
+
+			for (Iterator itr1 = prefs.entrySet().iterator(); itr1.hasNext();) {
+				final Map.Entry entry = (Map.Entry) itr1.next();
+				final IPath path = (IPath) entry.getKey();
+				final Set<IProjectFacetVersion> owners = (Set<IProjectFacetVersion>) entry.getValue();
+				IProjectFacetVersion foundVersion = null;
+				boolean found = false;
+
+				for (IProjectFacetVersion anOwner : owners) {
+					if (anOwner.getProjectFacet().equals(facet)) {
+						foundVersion = anOwner;
+						found = true;
+						break;
+					}
 				}
-	            
-	            if( found )
-	            {
-	                owners.remove( foundVersion );
-	                
-	                if( owners.size() == 0 )
-	                {
-	                    itr1.remove();
-	                    
-	                    for( Iterator itr2 = cp.iterator(); itr2.hasNext(); )
-	                    {
-	                        final IClasspathEntry cpentry
-	                            = (IClasspathEntry) itr2.next();
-	                        
-	                        if( cpentry.getPath().equals( path ) )
-	                        {
-	                            itr2.remove();
-	                            cpchanged = true;
-	                            break;
-	                        }
-	                    }
-	                }
-	            }
-            }
 
-            if( cpchanged )
-            {
-                setClasspath( jproj, cp );
-            }
-            
-            writePreferences( project, prefs );
-        }
-        catch( BackingStoreException e )
-        {
-            final IStatus st
-                = new Status( IStatus.ERROR, FacetCorePlugin.PLUGIN_ID, 0, 
-                              Resources.failedWritingPreferences, e );
-            
-            throw new CoreException( st );
-        }
-    }
+				if (found) {
+					owners.remove(foundVersion);
+
+					if (owners.size() == 0) {
+						itr1.remove();
+
+						for (Iterator itr2 = cp.iterator(); itr2.hasNext();) {
+							final IClasspathEntry cpentry = (IClasspathEntry) itr2.next();
+
+							if (cpentry.getPath().equals(path)) {
+								itr2.remove();
+								cpchanged = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+
+			if (cpchanged) {
+				setClasspath(jproj, cp);
+			}
+
+			writePreferences(project, prefs);
+		} catch (BackingStoreException e) {
+			final IStatus st = new Status(IStatus.ERROR, FacetCorePlugin.PLUGIN_ID, 0, Resources.failedWritingPreferences, e);
+
+			throw new CoreException(st);
+		}
+	}
+
+	private static void removeOnlyCPEntries(final IProject project, final IProjectFacetVersion fv, final IJavaProject jproj, final List cp,
+			IRuntime oldRuntime) throws CoreException {
+		IFacetedProject fproj = ProjectFacetsManager.create(project);
+		IRuntime runtime = (oldRuntime != null) ? oldRuntime : fproj.getPrimaryRuntime();
+
+		if (runtime != null) {
+			IClasspathProvider cpprov = (IClasspathProvider) runtime.getAdapter(IClasspathProvider.class);
+			List cpentries = cpprov.getClasspathEntries(fv);
+			boolean realCPChanged = false;
+			for (Iterator itr = cpentries.iterator(); itr.hasNext();) {
+				IClasspathEntry cpentry = (IClasspathEntry) itr.next();
+				IPath path = cpentry.getPath();
+				boolean contains = cp.contains(cpentry);
+
+				if (contains) {
+					for (Iterator itr2 = cp.iterator(); itr2.hasNext();) {
+						final IClasspathEntry realEntry = (IClasspathEntry) itr2.next();
+
+						if (realEntry.getPath().equals(path)) {
+							itr2.remove();
+							realCPChanged = true;
+							break;
+						}
+					}
+				}
+			}
+			if (realCPChanged) {
+				setClasspath(jproj, cp);
+			}
+		}
+	}
     
     private static List getClasspath( final IJavaProject jproj )
     
