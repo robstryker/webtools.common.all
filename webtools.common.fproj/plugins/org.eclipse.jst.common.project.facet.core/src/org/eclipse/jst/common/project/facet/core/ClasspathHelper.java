@@ -262,18 +262,23 @@ public final class ClasspathHelper
 			for (Iterator itr1 = prefs.entrySet().iterator(); itr1.hasNext();) {
 				final Map.Entry entry = (Map.Entry) itr1.next();
 				final IPath path = (IPath) entry.getKey();
-				final Set<IProjectFacetVersion> owners = (Set<IProjectFacetVersion>) entry.getValue();
+				final Set owners = (Set) entry.getValue();
 				IProjectFacetVersion foundVersion = null;
-				boolean found = false;
+				boolean found = false,systemFound = false;
 
-				for (IProjectFacetVersion anOwner : owners) {
-					if (anOwner.getProjectFacet().equals(facet)) {
-						foundVersion = anOwner;
+				for (Object anOwner : owners) {
+					if (anOwner == SYSTEM_OWNER) {
+						systemFound = true;
+						continue;
+					}
+					if (((IProjectFacetVersion)anOwner).getProjectFacet().equals(facet)) {
+						foundVersion = (IProjectFacetVersion)anOwner;
 						found = true;
 						break;
 					}
 				}
-
+				if (systemFound)
+					owners.remove(SYSTEM_OWNER);
 				if (found) {
 					owners.remove(foundVersion);
 
