@@ -399,10 +399,12 @@ public final class ClasspathHelper
                 }
                 else
                 {
-                    final IProjectFacetVersion fv 
-                        = parseFeatureVersion( segment );
-                    
-                    set.add( fv );
+                	if(segment.length() != 0) {
+	                    final IProjectFacetVersion fv 
+	                        = parseFeatureVersion( segment );
+	                    
+	                    set.add( fv );
+	                }
                 }
             }
             
