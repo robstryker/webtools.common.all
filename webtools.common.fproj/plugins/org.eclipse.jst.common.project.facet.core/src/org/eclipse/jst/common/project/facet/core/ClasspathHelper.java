@@ -187,7 +187,7 @@ public final class ClasspathHelper
                 final IClasspathEntry cpentry = (IClasspathEntry) itr.next();
                 final IPath path = cpentry.getPath();
                 
-                final boolean contains = cp.contains( cpentry );
+                final boolean contains = classpathContains(cp, cpentry);
                 
                 Set owners = (Set) prefs.get( path );
                 
@@ -228,6 +228,16 @@ public final class ClasspathHelper
             throw new CoreException( st );
         }
     }
+
+	private static boolean classpathContains(final List cp, final IClasspathEntry cpentry) {
+		if (cpentry == null) return false;
+		for (Iterator iterator = cp.iterator(); iterator.hasNext();) {
+			IClasspathEntry entry = (IClasspathEntry) iterator.next();
+			if (entry.getPath().equals(cpentry.getPath()))
+				return true;
+		}
+		return false;
+	}
     
     /**
      * Removes the classpath entries belonging to the specified project facet.
