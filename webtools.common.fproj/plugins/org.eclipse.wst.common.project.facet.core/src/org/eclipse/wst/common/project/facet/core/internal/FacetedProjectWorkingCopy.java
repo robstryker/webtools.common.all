@@ -454,7 +454,7 @@ public final class FacetedProjectWorkingCopy
                 {
                     final IProjectFacetVersion currentVersion = getProjectFacetVersion( f );
                     
-                    if( currentVersion == null )
+                    if( currentVersion == null && f.getVersions().size() > 0 )
                     {
                         IProjectFacetVersion fv = f.getDefaultVersion();
                         
@@ -1026,10 +1026,11 @@ public final class FacetedProjectWorkingCopy
                     throw new IllegalArgumentException( msg );
                 }
                 
-                if( ! equals( this.selectedPresetId, presetId ) )
+                final IPreset preset = this.availablePresets.get( presetId );
+                
+                if( ! equals( this.selectedPresetId, presetId ) || 
+                    ( preset != null && ! equals( preset.getProjectFacets(), getProjectFacets() ) ) )
                 {
-                    final IPreset preset = this.availablePresets.get( presetId );
-                    
                     if( preset != null )
                     {
                         // The following line keeps the setProjectFacets() call that comes next from 
@@ -1191,14 +1192,7 @@ public final class FacetedProjectWorkingCopy
                 if( ! this.targetedRuntimes.equals( runtimes ) )
                 {
                     this.targetedRuntimes.clear();
-                    
-                    for( IRuntime r : runtimes )
-                    {
-                        if( this.targetableRuntimes.contains( r ) )
-                        {
-                            this.targetedRuntimes.add( r );
-                        }
-                    }
+                    this.targetedRuntimes.addAll( runtimes );
                     
                     notifyListeners( new FacetedProjectEvent( this, IFacetedProjectEvent.Type.TARGETED_RUNTIMES_CHANGED ) );
                     notifyListeners( new FacetedProjectEvent( this, IFacetedProjectEvent.Type.PROJECT_MODIFIED ) );

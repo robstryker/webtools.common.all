@@ -30,8 +30,10 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jst.common.project.facet.core.internal.FacetCorePlugin;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.wst.common.project.facet.core.IFacetedProject;
+import org.eclipse.wst.common.project.facet.core.IProjectFacet;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
 import org.eclipse.wst.common.project.facet.core.runtime.IRuntime;
@@ -108,9 +110,6 @@ import org.osgi.service.prefs.Preferences;
 
 public final class ClasspathHelper
 {
-    private static final String PLUGIN_ID
-        = "org.eclipse.jst.common.project.facet.core";
-    
     private static final Object SYSTEM_OWNER = new Object();
     
     private ClasspathHelper() {}
@@ -188,7 +187,7 @@ public final class ClasspathHelper
                 final IClasspathEntry cpentry = (IClasspathEntry) itr.next();
                 final IPath path = cpentry.getPath();
                 
-                final boolean contains = cp.contains( cpentry );
+                final boolean contains = classpathContains(cp, cpentry);
                 
                 Set owners = (Set) prefs.get( path );
                 
@@ -223,12 +222,22 @@ public final class ClasspathHelper
         catch( BackingStoreException e )
         {
             final IStatus st
-                = new Status( IStatus.ERROR, PLUGIN_ID, 0, 
+                = new Status( IStatus.ERROR, FacetCorePlugin.PLUGIN_ID, 0, 
                               Resources.failedWritingPreferences, e );
             
             throw new CoreException( st );
         }
     }
+
+	private static boolean classpathContains(final List cp, final IClasspathEntry cpentry) {
+		if (cpentry == null) return false;
+		for (Iterator iterator = cp.iterator(); iterator.hasNext();) {
+			IClasspathEntry entry = (IClasspathEntry) iterator.next();
+			if (entry.getPath().equals(cpentry.getPath()))
+				return true;
+		}
+		return false;
+	}
     
     /**
      * Removes the classpath entries belonging to the specified project facet.
@@ -239,66 +248,109 @@ public final class ClasspathHelper
      * @throws CoreException if failed while removing classpath entries
      */
     
-    public static void removeClasspathEntries( final IProject project,
-                                               final IProjectFacetVersion fv )
-    
-        throws CoreException
-        
-    {
-        try
-        {
-            final IJavaProject jproj = JavaCore.create( project );
-            final List cp = getClasspath( jproj );
-            boolean cpchanged = false;
+    public static void removeClasspathEntries(final IProject project, final IProjectFacetVersion fv)
 
-            final Map prefs = readPreferences( project );
-            
-            for( Iterator itr1 = prefs.entrySet().iterator(); itr1.hasNext(); )
-            {
-                final Map.Entry entry = (Map.Entry) itr1.next();
-                final IPath path = (IPath) entry.getKey();
-                final Set owners = (Set) entry.getValue();
-                
-                if( owners.contains( fv ) )
-                {
-                    owners.remove( fv );
-                    
-                    if( owners.size() == 0 )
-                    {
-                        itr1.remove();
-                        
-                        for( Iterator itr2 = cp.iterator(); itr2.hasNext(); )
-                        {
-                            final IClasspathEntry cpentry
-                                = (IClasspathEntry) itr2.next();
-                            
-                            if( cpentry.getPath().equals( path ) )
-                            {
-                                itr2.remove();
-                                cpchanged = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
+	throws CoreException
 
-            if( cpchanged )
-            {
-                setClasspath( jproj, cp );
-            }
-            
-            writePreferences( project, prefs );
-        }
-        catch( BackingStoreException e )
-        {
-            final IStatus st
-                = new Status( IStatus.ERROR, PLUGIN_ID, 0, 
-                              Resources.failedWritingPreferences, e );
-            
-            throw new CoreException( st );
-        }
-    }
+	{
+		try {
+			final IJavaProject jproj = JavaCore.create(project);
+			final List cp = getClasspath(jproj);
+			final IProjectFacet facet = fv.getProjectFacet();
+			boolean cpchanged = false;
+
+			Map prefs = readPreferences(project);
+			
+			// In the case where no prefs exists... make sure the entries of the
+			// runtime are removed before continuing
+			if (prefs.isEmpty()) {
+				IFacetedProject fproj = ProjectFacetsManager.create(project);
+				IRuntime runtime = fproj.getPrimaryRuntime();
+				removeOnlyCPEntries(project, fv, jproj, cp, runtime);
+			}
+
+			for (Iterator itr1 = prefs.entrySet().iterator(); itr1.hasNext();) {
+				final Map.Entry entry = (Map.Entry) itr1.next();
+				final IPath path = (IPath) entry.getKey();
+				final Set owners = (Set) entry.getValue();
+				IProjectFacetVersion foundVersion = null;
+				boolean found = false,systemFound = false;
+
+				for (Object anOwner : owners) {
+					if (anOwner == SYSTEM_OWNER) {
+						systemFound = true;
+						continue;
+					}
+					if (((IProjectFacetVersion)anOwner).getProjectFacet().equals(facet)) {
+						foundVersion = (IProjectFacetVersion)anOwner;
+						found = true;
+						break;
+					}
+				}
+				if (systemFound)
+					owners.remove(SYSTEM_OWNER);
+				if (found) {
+					owners.remove(foundVersion);
+
+					if (owners.size() == 0) {
+						itr1.remove();
+
+						for (Iterator itr2 = cp.iterator(); itr2.hasNext();) {
+							final IClasspathEntry cpentry = (IClasspathEntry) itr2.next();
+
+							if (cpentry.getPath().equals(path)) {
+								itr2.remove();
+								cpchanged = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+
+			if (cpchanged) {
+				setClasspath(jproj, cp);
+			}
+
+			writePreferences(project, prefs);
+		} catch (BackingStoreException e) {
+			final IStatus st = new Status(IStatus.ERROR, FacetCorePlugin.PLUGIN_ID, 0, Resources.failedWritingPreferences, e);
+
+			throw new CoreException(st);
+		}
+	}
+
+	private static void removeOnlyCPEntries(final IProject project, final IProjectFacetVersion fv, final IJavaProject jproj, final List cp,
+			IRuntime oldRuntime) throws CoreException {
+		IFacetedProject fproj = ProjectFacetsManager.create(project);
+		IRuntime runtime = (oldRuntime != null) ? oldRuntime : fproj.getPrimaryRuntime();
+
+		if (runtime != null) {
+			IClasspathProvider cpprov = (IClasspathProvider) runtime.getAdapter(IClasspathProvider.class);
+			List cpentries = cpprov.getClasspathEntries(fv);
+			boolean realCPChanged = false;
+			for (Iterator itr = cpentries.iterator(); itr.hasNext();) {
+				IClasspathEntry cpentry = (IClasspathEntry) itr.next();
+				IPath path = cpentry.getPath();
+				boolean contains = cp.contains(cpentry);
+
+				if (contains) {
+					for (Iterator itr2 = cp.iterator(); itr2.hasNext();) {
+						final IClasspathEntry realEntry = (IClasspathEntry) itr2.next();
+
+						if (realEntry.getPath().equals(path)) {
+							itr2.remove();
+							realCPChanged = true;
+							break;
+						}
+					}
+				}
+			}
+			if (realCPChanged) {
+				setClasspath(jproj, cp);
+			}
+		}
+	}
     
     private static List getClasspath( final IJavaProject jproj )
     
@@ -343,24 +395,26 @@ public final class ClasspathHelper
             final String key = keys[ i ];
             final Preferences node = root.node( key );
             
-            final String owners = node.get( "owners", null );
-            final String[] split = owners.split( ";" );
+            final String owners = node.get( "owners", null ); //$NON-NLS-1$
+            final String[] split = owners.split( ";" ); //$NON-NLS-1$
             final Set set = new HashSet();
             
             for( int j = 0; j < split.length; j++ )
             {
                 final String segment = split[ j ];
                 
-                if( segment.equals( "#system#" ) )
+                if( segment.equals( "#system#" ) ) //$NON-NLS-1$
                 {
                     set.add( SYSTEM_OWNER );
                 }
                 else
                 {
-                    final IProjectFacetVersion fv 
-                        = parseFeatureVersion( segment );
-                    
-                    set.add( fv );
+                	if(segment.length() != 0) {
+	                    final IProjectFacetVersion fv 
+	                        = parseFeatureVersion( segment );
+	                    
+	                    set.add( fv );
+	                }
                 }
             }
             
@@ -403,7 +457,7 @@ public final class ClasspathHelper
                 
                 if( owner == SYSTEM_OWNER )
                 {
-                    buf.append( "#system#" );
+                    buf.append( "#system#" ); //$NON-NLS-1$
                 }
                 else
                 {
@@ -417,7 +471,7 @@ public final class ClasspathHelper
             }
 
             final Preferences node = root.node( encode( path ) );
-            node.put( "owners", buf.toString() );
+            node.put( "owners", buf.toString() ); //$NON-NLS-1$
         }
         
         root.flush();
@@ -427,8 +481,8 @@ public final class ClasspathHelper
     private static Preferences getPreferencesNode( final IProject project )
     {
         final ProjectScope scope = new ProjectScope( project );
-        final IEclipsePreferences pluginRoot = scope.getNode( PLUGIN_ID );
-        return pluginRoot.node( "classpath.helper" );
+        final IEclipsePreferences pluginRoot = scope.getNode( FacetCorePlugin.PLUGIN_ID );
+        return pluginRoot.node( "classpath.helper" ); //$NON-NLS-1$
     }
     
     private static IProjectFacetVersion parseFeatureVersion( final String str )
@@ -442,12 +496,12 @@ public final class ClasspathHelper
     
     private static String encode( final IPath path )
     {
-        return path.toString().replaceAll( "/", "::" );
+        return path.toString().replaceAll( "/", "::" ); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     private static IPath decode( final String path )
     {
-        return new Path( path.replaceAll( "::", "/" ) );
+        return new Path( path.replaceAll( "::", "/" ) ); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     private static final class Resources
