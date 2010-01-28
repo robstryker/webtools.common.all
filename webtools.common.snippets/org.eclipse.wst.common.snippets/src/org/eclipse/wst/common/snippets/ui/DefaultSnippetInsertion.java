@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.ITextEditorExtension2;
 import org.eclipse.wst.common.snippets.core.ISnippetItem;
 import org.eclipse.wst.common.snippets.internal.Logger;
 import org.eclipse.wst.common.snippets.internal.SnippetsPlugin;
@@ -234,7 +235,7 @@ public class DefaultSnippetInsertion implements ISnippetInsertion {
 
 	private void insertIntoTextEditor(ITextEditor editor) {
 		// find the text widget, its Document, and the current selection
-		if (editor.isEditable()) {
+		if (isEditable(editor)) {
 			IDocumentProvider docprovider = editor.getDocumentProvider();
 			ISelectionProvider selprovider = editor.getSelectionProvider();
 			if (docprovider != null && selprovider != null) {
@@ -252,6 +253,13 @@ public class DefaultSnippetInsertion implements ISnippetInsertion {
 				}
 			}
 		}
+	}
+
+	private boolean isEditable(ITextEditor editor) {
+		if (editor instanceof ITextEditorExtension2)
+			return ((ITextEditorExtension2) editor).validateEditorInputState();
+
+		return editor.isEditable();
 	}
 
 
