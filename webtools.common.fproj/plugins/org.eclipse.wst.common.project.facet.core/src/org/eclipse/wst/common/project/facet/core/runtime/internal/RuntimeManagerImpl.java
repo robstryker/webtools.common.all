@@ -108,7 +108,7 @@ public final class RuntimeManagerImpl
     
     public static Set<IRuntimeComponentType> getRuntimeComponentTypes()
     {
-        return runtimeComponentTypes.getUnmodifiable();
+        return runtimeComponentTypes.getItemSet();
     }
     
     public static boolean isRuntimeComponentTypeDefined( final String id )
@@ -118,7 +118,7 @@ public final class RuntimeManagerImpl
     
     public static IRuntimeComponentType getRuntimeComponentType( final String id )
     {
-        final IRuntimeComponentType rc = runtimeComponentTypes.get( id );
+        final IRuntimeComponentType rc = runtimeComponentTypes.getItemByKey( id );
         
         if( rc == null )
         {
@@ -154,7 +154,7 @@ public final class RuntimeManagerImpl
         synchronized( runtimes )
         {
             bridge();
-            return new HashSet<IRuntime>( runtimes );
+            return new HashSet<IRuntime>( runtimes.getItemSet() );
         }
     }
     
@@ -166,7 +166,7 @@ public final class RuntimeManagerImpl
             
             final Set<IRuntime> result = new HashSet<IRuntime>();
             
-            for( IRuntime r : runtimes )
+            for( IRuntime r : runtimes.getItemSet() )
             {
                 boolean supports = true;
                 
@@ -204,7 +204,7 @@ public final class RuntimeManagerImpl
         {
             bridge();
             
-            final IRuntime runtime = runtimes.get( name );
+            final IRuntime runtime = runtimes.getItemByKey( name );
             
             if( runtime == null )
             {
@@ -239,7 +239,7 @@ public final class RuntimeManagerImpl
                 }
             }
             
-            runtimes.add( r.getName(), r );
+            runtimes.addItemWithKey( r.getName(), r );
             
             notifyRuntimeListeners();
             
@@ -251,7 +251,7 @@ public final class RuntimeManagerImpl
     {
         synchronized( runtimes )
         {
-            if( runtimes.delete( runtime.getName() ) )
+            if( runtimes.removeItemByKey( runtime.getName() ) )
             {
                 notifyRuntimeListeners();
             }
@@ -362,7 +362,7 @@ public final class RuntimeManagerImpl
             
             final Map<String,BridgedRuntime> existing = new HashMap<String,BridgedRuntime>();
             
-            for( IRuntime r : runtimes )
+            for( IRuntime r : runtimes.getItemSet() )
             {
                 if( r instanceof BridgedRuntime )
                 {
@@ -389,7 +389,7 @@ public final class RuntimeManagerImpl
                 
                 for( BridgedRuntime r : existing.values() )
                 {
-                    runtimes.remove( r.getName() );
+                    runtimes.removeItemByKey( r.getName() );
                     modified = true;
                 }
                 
@@ -402,7 +402,7 @@ public final class RuntimeManagerImpl
             {
                 if( ! exported.contains( r.getNativeRuntimeId() ) )
                 {
-                    runtimes.delete( r.getName() );
+                    runtimes.removeItemByKey( r.getName() );
                     modified = true;
                 }
             }
@@ -422,7 +422,7 @@ public final class RuntimeManagerImpl
                         
                         r.setName( createUniqueRuntimeName( id ) );
                         
-                        runtimes.add( r.getName(), r );
+                        runtimes.addItemWithKey( r.getName(), r );
                         modified = true;
                     }
                     catch( CoreException e )
@@ -443,7 +443,7 @@ public final class RuntimeManagerImpl
     {
         String name = suggestion;
         
-        for( int i = 1; runtimes.contains( name ); i++ )
+        for( int i = 1; runtimes.containsKey( name ); i++ )
         {
             name = suggestion + " (" + i + ")"; //$NON-NLS-1$ //$NON-NLS-2$
         }
@@ -544,7 +544,7 @@ public final class RuntimeManagerImpl
             }
         }
         
-        runtimeComponentTypes.add( id, rct );
+        runtimeComponentTypes.addItemWithKey( id, rct );
     }
     
     private static void readRuntimeComponentVersion( final IConfigurationElement config )
@@ -566,7 +566,7 @@ public final class RuntimeManagerImpl
         }
         
         final RuntimeComponentType rct 
-            = (RuntimeComponentType) runtimeComponentTypes.get( type );
+            = (RuntimeComponentType) runtimeComponentTypes.getItemByKey( type );
         
         if( rct == null )
         {
@@ -601,7 +601,7 @@ public final class RuntimeManagerImpl
         final List<IRuntimeComponentType> badRuntimeComponentTypes 
             = new ArrayList<IRuntimeComponentType>();
         
-        for( IRuntimeComponentType rct : runtimeComponentTypes )
+        for( IRuntimeComponentType rct : runtimeComponentTypes.getItemSet() )
         {
             try
             {
@@ -660,7 +660,7 @@ public final class RuntimeManagerImpl
         
         for( IRuntimeComponentType rct : badRuntimeComponentTypes )
         {
-            runtimeComponentTypes.remove( rct );
+            runtimeComponentTypes.removeItem( rct );
         }
     }
     

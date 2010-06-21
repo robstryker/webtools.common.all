@@ -139,6 +139,8 @@ public final class FacetedProject
     private final Set<IProjectFacet> fixed;
     private final Set<IProjectFacet> fixedReadOnly;
     private final Map<String,ProjectFacet> unknownFacets;
+    private final Map<IProjectFacet,String> activeFacetAliases;
+    private final Map<IProjectFacetVersion,String> activeFacetVersionAliases;
     private final Set<String> targetedRuntimes;
     private String primaryRuntime;
     IFile f;
@@ -161,6 +163,8 @@ public final class FacetedProject
         this.fixed = new CopyOnWriteArraySet<IProjectFacet>();
         this.fixedReadOnly = Collections.unmodifiableSet( this.fixed );
         this.unknownFacets = new HashMap<String,ProjectFacet>();
+        this.activeFacetAliases = new HashMap<IProjectFacet,String>();
+        this.activeFacetVersionAliases = new HashMap<IProjectFacetVersion,String>();
         this.targetedRuntimes = new CopyOnWriteArraySet<String>();
         this.listeners = new ProjectListenerRegistry();
         this.parsingException = null;
@@ -1499,18 +1503,29 @@ public final class FacetedProject
         
         for( IProjectFacet f : this.fixed )
         {
+            String fid = this.activeFacetAliases.get( f );
+            fid = ( fid == null ? f.getId() : fid );
+            
             out.print( "  <fixed facet=\"" ); //$NON-NLS-1$
-            out.print( escape( f.getId() ) );
+            out.print( escape( fid ) );
             out.print( "\"/>" ); //$NON-NLS-1$
             out.print( nl );
         }
         
         for( IProjectFacetVersion fv : this.facets )
         {
+            final IProjectFacet f = fv.getProjectFacet();
+
+            String fid = this.activeFacetAliases.get( f );
+            fid = ( fid == null ? f.getId() : fid );
+            
+            String fverstr = this.activeFacetVersionAliases.get( fv );
+            fverstr = ( fverstr == null ? fv.getVersionString() : fverstr );
+            
             out.print( "  <installed facet=\"" ); //$NON-NLS-1$
-            out.print( escape( fv.getProjectFacet().getId() ) );
+            out.print( escape( fid ) );
             out.print( "\" version=\"" ); //$NON-NLS-1$
-            out.print( escape( fv.getVersionString() ) );
+            out.print( escape( fverstr ) );
             out.print( "\"/>" ); //$NON-NLS-1$
             out.print( nl );
         }
@@ -1585,6 +1600,8 @@ public final class FacetedProject
                 this.facets.clear();
                 this.fixed.clear();
                 this.unknownFacets.clear();
+                this.activeFacetAliases.clear();
+                this.activeFacetVersionAliases.clear();
                 this.targetedRuntimes.clear();
                 this.primaryRuntime = null;
                 
@@ -1634,6 +1651,11 @@ public final class FacetedProject
                                 if( ProjectFacetsManager.isProjectFacetDefined( id ) )
                                 {
                                     f = ProjectFacetsManager.getProjectFacet( id );
+                                    
+                                    if( ! f.getId().equals( id ) )
+                                    {
+                                        this.activeFacetAliases.put( f, id );
+                                    }
                                 }
                                 else
                                 {
@@ -1652,6 +1674,11 @@ public final class FacetedProject
                                 if( ProjectFacetsManager.isProjectFacetDefined( id ) )
                                 {
                                     f = ProjectFacetsManager.getProjectFacet( id );
+                                    
+                                    if( ! f.getId().equals( id ) )
+                                    {
+                                        this.activeFacetAliases.put( f, id );
+                                    }
                                 }
                                 else
                                 {
@@ -1663,6 +1690,11 @@ public final class FacetedProject
                                 if( f.hasVersion( version ) )
                                 {
                                     fv = f.getVersion( version );
+                                    
+                                    if( ! fv.getVersionString().equals( version ) )
+                                    {
+                                        this.activeFacetVersionAliases.put( fv, version );
+                                    }
                                 }
                                 else
                                 {
