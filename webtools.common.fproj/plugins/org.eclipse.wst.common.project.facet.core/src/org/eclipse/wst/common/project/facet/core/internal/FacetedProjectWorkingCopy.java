@@ -640,7 +640,7 @@ public final class FacetedProjectWorkingCopy
     {
         synchronized( this.lock )
         {
-            return this.facets.getUnmodifiable();
+            return this.facets.getItemSet();
         }
     }
     
@@ -648,7 +648,7 @@ public final class FacetedProjectWorkingCopy
     {
         synchronized( this.lock )
         {
-            return this.facets.get( f );
+            return this.facets.getItemByKey( f );
         }
     }
     
@@ -664,7 +664,7 @@ public final class FacetedProjectWorkingCopy
     {
         synchronized( this.lock )
         {
-            return this.facets.contains( fv );
+            return this.facets.containsItem( fv );
         }
     }
     
@@ -681,17 +681,17 @@ public final class FacetedProjectWorkingCopy
                 
                 for( IProjectFacetVersion fv : facets )
                 {
-                    newProjectFacets.add( fv.getProjectFacet(), fv );
+                    newProjectFacets.addItemWithKey( fv.getProjectFacet(), fv );
                 }
                 
                 final Set<IProjectFacetVersion> addedFacets = new HashSet<IProjectFacetVersion>();
                 final Set<IProjectFacetVersion> removedFacets = new HashSet<IProjectFacetVersion>();
                 final Set<IProjectFacetVersion> changedVersions = new HashSet<IProjectFacetVersion>();
                 
-                for( IProjectFacetVersion fv : newProjectFacets )
+                for( IProjectFacetVersion fv : newProjectFacets.getItemSet() )
                 {
                     final IProjectFacetVersion currentFacetVersion 
-                        = this.facets.get( fv.getProjectFacet() );
+                        = this.facets.getItemByKey( fv.getProjectFacet() );
                     
                     if( currentFacetVersion == null )
                     {
@@ -706,7 +706,7 @@ public final class FacetedProjectWorkingCopy
                     }
                 }
                 
-                for( IProjectFacetVersion fv : this.facets )
+                for( IProjectFacetVersion fv : this.facets.getItemSet() )
                 {
                     if( ! newProjectFacets.containsKey( fv.getProjectFacet() ) )
                     {
@@ -752,14 +752,14 @@ public final class FacetedProjectWorkingCopy
             synchronized( this.lock )
             {
                 final IProjectFacetVersion existingVersion 
-                    = this.facets.get( fv.getProjectFacet() );
+                    = this.facets.getItemByKey( fv.getProjectFacet() );
                 
                 if( existingVersion == null )
                 {
                     final Set<IProjectFacetVersion> newProjectFacets 
                         = new HashSet<IProjectFacetVersion>();
         
-                    newProjectFacets.addAll( this.facets );
+                    newProjectFacets.addAll( this.facets.getItemSet() );
                     newProjectFacets.add( fv );
                     
                     setProjectFacets( newProjectFacets );
@@ -812,7 +812,7 @@ public final class FacetedProjectWorkingCopy
             synchronized( this.lock )
             {
                 final IProjectFacetVersion existingVersion 
-                    = this.facets.get( fv.getProjectFacet() );
+                    = this.facets.getItemByKey( fv.getProjectFacet() );
                 
                 if( existingVersion == null )
                 {
@@ -823,7 +823,7 @@ public final class FacetedProjectWorkingCopy
                     final Set<IProjectFacetVersion> newProjectFacets 
                         = new HashSet<IProjectFacetVersion>();
         
-                    newProjectFacets.addAll( this.facets );
+                    newProjectFacets.addAll( this.facets.getItemSet() );
                     newProjectFacets.remove( fv );
                     
                     setProjectFacets( newProjectFacets );
@@ -850,7 +850,7 @@ public final class FacetedProjectWorkingCopy
             synchronized( this.lock )
             {
                 final IProjectFacetVersion existingVersion 
-                    = this.facets.get( fv.getProjectFacet() );
+                    = this.facets.getItemByKey( fv.getProjectFacet() );
                 
                 if( existingVersion == null )
                 {
@@ -866,7 +866,7 @@ public final class FacetedProjectWorkingCopy
                     final Set<IProjectFacetVersion> newProjectFacets 
                         = new HashSet<IProjectFacetVersion>();
         
-                    newProjectFacets.addAll( this.facets );
+                    newProjectFacets.addAll( this.facets.getItemSet() );
                     newProjectFacets.remove( existingVersion );
                     newProjectFacets.add( fv );
                     
@@ -896,7 +896,7 @@ public final class FacetedProjectWorkingCopy
     {
         synchronized( this.lock )
         {
-            return this.availablePresets.getUnmodifiable();
+            return this.availablePresets.getItemSet();
         }
     }
     
@@ -974,7 +974,7 @@ public final class FacetedProjectWorkingCopy
                     
                     if( applicable )
                     {
-                        newAvailablePresets.add( preset.getId(), preset );
+                        newAvailablePresets.addItemWithKey( preset.getId(), preset );
                     }
                 }
                 
@@ -1003,7 +1003,7 @@ public final class FacetedProjectWorkingCopy
         {
             if( this.selectedPresetId != null )
             {
-                return this.availablePresets.get( this.selectedPresetId );
+                return this.availablePresets.getItemByKey( this.selectedPresetId );
             }
             else
             {
@@ -1026,7 +1026,7 @@ public final class FacetedProjectWorkingCopy
                     throw new IllegalArgumentException( msg );
                 }
                 
-                final IPreset preset = this.availablePresets.get( presetId );
+                final IPreset preset = this.availablePresets.getItemByKey( presetId );
                 
                 if( ! equals( this.selectedPresetId, presetId ) || 
                     ( preset != null && ! equals( preset.getProjectFacets(), getProjectFacets() ) ) )
@@ -1060,7 +1060,7 @@ public final class FacetedProjectWorkingCopy
     {
         synchronized( this.lock )
         {
-            return this.availablePresets.get( DefaultConfigurationPresetFactory.PRESET_ID );
+            return this.availablePresets.getItemByKey( DefaultConfigurationPresetFactory.PRESET_ID );
         }
     }
 
@@ -1068,7 +1068,7 @@ public final class FacetedProjectWorkingCopy
     {
         synchronized( this.lock )
         {
-            return this.availablePresets.get( MinimalConfigurationPresetFactory.PRESET_ID );
+            return this.availablePresets.getItemByKey( MinimalConfigurationPresetFactory.PRESET_ID );
         }
     }
 
@@ -1111,7 +1111,7 @@ public final class FacetedProjectWorkingCopy
                     {
                         ok = true;
                         
-                        for( IProjectFacetVersion fv : this.facets )
+                        for( IProjectFacetVersion fv : this.facets.getItemSet() )
                         {
                             if( ! r.supports( fv ) )
                             {

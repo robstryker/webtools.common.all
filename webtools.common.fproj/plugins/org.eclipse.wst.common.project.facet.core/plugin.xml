@@ -37,7 +37,12 @@
     id="presets" 
     name="%extPointPresets" 
     schema="schemas/presets.exsd"/>
-  
+    
+  <extension-point 
+    id="aliases" 
+    name="%extPointAliases" 
+    schema="schemas/aliases.exsd"/>
+      
   <extension
     id="nature"
     point="org.eclipse.core.resources.natures">

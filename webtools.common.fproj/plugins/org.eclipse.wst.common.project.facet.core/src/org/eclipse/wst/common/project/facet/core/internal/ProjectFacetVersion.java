@@ -43,6 +43,8 @@ public final class ProjectFacetVersion
 {
     private ProjectFacet facet;
     private String version;
+    private final Set<String> aliases;
+    private final Set<String> aliasesReadOnly;
     private IConstraint constraint;
     private String plugin;
     private Map<IProjectFacetVersion,Integer> compTable = Collections.emptyMap();
@@ -51,6 +53,8 @@ public final class ProjectFacetVersion
     
     ProjectFacetVersion() 
     {
+        this.aliases = new HashSet<String>();
+        this.aliasesReadOnly = Collections.unmodifiableSet( this.aliases );
         this.properties = new HashMap<String,Object>();
         this.propertiesReadOnly = Collections.unmodifiableMap( this.properties );
     }
@@ -73,6 +77,16 @@ public final class ProjectFacetVersion
     void setVersionString( final String version )
     {
         this.version = version;
+    }
+    
+    public Set<String> getAliases()
+    {
+        return this.aliasesReadOnly;
+    }
+    
+    void addAlias( final String alias )
+    {
+        this.aliases.add( alias );
     }
     
     public Versionable<IProjectFacetVersion> getVersionable()

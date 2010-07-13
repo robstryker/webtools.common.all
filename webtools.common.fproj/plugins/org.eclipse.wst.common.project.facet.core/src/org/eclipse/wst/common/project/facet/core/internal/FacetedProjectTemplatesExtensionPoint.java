@@ -51,13 +51,13 @@ public final class FacetedProjectTemplatesExtensionPoint
     public static Set<IFacetedProjectTemplate> getTemplates()
     {
         readExtensions();
-        return templates.getUnmodifiable();
+        return templates.getItemSet();
     }
     
     public static IFacetedProjectTemplate getTemplate( final String id )
     {
         readExtensions();
-        return templates.get( id );
+        return templates.getItemByKey( id );
     }
     
     private static synchronized void readExtensions()
@@ -136,7 +136,7 @@ public final class FacetedProjectTemplatesExtensionPoint
             }
         }
         
-        templates.add( template.getId(), template );
+        templates.addItemWithKey( template.getId(), template );
     }
     
     private static final class Resources

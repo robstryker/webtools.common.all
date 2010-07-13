@@ -52,7 +52,7 @@ public final class RuntimeComponentType
     
     void addVersion( final IRuntimeComponentVersion ver )
     {
-        this.versions.add( ver.getVersionString(), ver );
+        this.versions.addItemWithKey( ver.getVersionString(), ver );
     }
     
     @SuppressWarnings( "unchecked" )

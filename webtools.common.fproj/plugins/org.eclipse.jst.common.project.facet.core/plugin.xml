@@ -106,7 +106,13 @@
     <validator class="org.eclipse.jst.common.project.facet.core.internal.JavaFacetValidator">
       <facet id="jst.java"/>
     </validator>
-  </extension>    
+  </extension>
+  
+  <extension point="org.eclipse.wst.common.project.facet.core.aliases">
+    <facet-alias facet="jst.java" alias="java"/>
+    <facet-version-alias facet="jst.java" version="5.0" alias="1.5"/>
+    <facet-version-alias facet="jst.java" version="6.0" alias="1.6"/>
+  </extension>
 
   <extension 
     point="org.eclipse.core.resources.markers"
