@@ -15,6 +15,7 @@ import static org.eclipse.wst.common.project.facet.ui.internal.util.GridLayoutUt
 import static org.eclipse.wst.common.project.facet.ui.internal.util.GridLayoutUtil.gl;
 import static org.eclipse.wst.common.project.facet.ui.internal.util.GridLayoutUtil.glmargins;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -32,8 +33,7 @@ public final class FacetsSelectionDialog
     extends TitleAreaDialog
     
 {
-    private final IFacetedProjectWorkingCopy fpjwcOriginal;
-    private final IFacetedProjectWorkingCopy fpjwcLocal;
+    private final IFacetedProjectWorkingCopy fpjwc;
     private FacetsSelectionPanel panel;
 
     public FacetsSelectionDialog( final Shell parentShell,
@@ -43,8 +43,7 @@ public final class FacetsSelectionDialog
         
         setShellStyle( getShellStyle() | SWT.RESIZE );
 
-        this.fpjwcOriginal = fpjwc;
-        this.fpjwcLocal = fpjwc.clone();
+        this.fpjwc = fpjwc;
         this.panel = null;
     }
     
@@ -62,7 +61,7 @@ public final class FacetsSelectionDialog
         composite.setLayoutData( gdfill() );
         composite.setLayout( glmargins( gl( 1 ), 5, 5 ) );
         
-        this.panel = new FacetsSelectionPanel( composite, this.fpjwcLocal );
+        this.panel = new FacetsSelectionPanel( composite, this.fpjwc );
         this.panel.setLayoutData( gdfill() );
         this.panel.setFocus();
 
@@ -70,13 +69,13 @@ public final class FacetsSelectionDialog
     }
     
     @Override
-    protected void okPressed()
+    protected void createButtonsForButtonBar( final Composite parent ) 
     {
-        this.fpjwcOriginal.mergeChanges( this.fpjwcLocal );
-        super.okPressed();
+        // Create only the OK button. There is no handling for cancel.
+        
+        createButton( parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true );
     }
 
-    
     public static final void openDialog( final Shell parentShell,
                                          final IFacetedProjectWorkingCopy fpjwc )
     {
