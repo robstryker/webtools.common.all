@@ -139,12 +139,14 @@ public final class ProjectFacet
     
     public IProjectFacetVersion getLatestSupportedVersion( final IRuntime r )
     {
-        for( IProjectFacetVersion fv : getSortedVersions( false ) )
-        {
-            if( r.supports( fv ) )
-            {
-                return fv;
-            }
+    	if(r != null){ //verifies the runtime exists before to check if the facets are supported by
+		    for( IProjectFacetVersion fv : getSortedVersions( false ) )
+		    {
+		        if( r.supports( fv ) )
+		        {
+		            return fv;
+		        }
+        	}
         }
         
         return null;
