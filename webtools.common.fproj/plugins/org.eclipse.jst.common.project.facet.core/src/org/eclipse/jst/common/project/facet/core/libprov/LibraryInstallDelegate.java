@@ -17,7 +17,6 @@ import static org.eclipse.wst.common.project.facet.core.util.internal.ProgressMo
 import static org.eclipse.wst.common.project.facet.core.util.internal.ProgressMonitorUtil.done;
 import static org.eclipse.wst.common.project.facet.core.util.internal.ProgressMonitorUtil.submon;
 import static org.eclipse.wst.common.project.facet.core.util.internal.ProgressMonitorUtil.worked;
-import static org.eclipse.wst.common.project.facet.core.util.internal.MiscUtil.equal;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,6 +42,7 @@ import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 import org.eclipse.wst.common.project.facet.core.events.IFacetedProjectEvent;
 import org.eclipse.wst.common.project.facet.core.events.IFacetedProjectListener;
 import org.eclipse.wst.common.project.facet.core.util.internal.CollectionsUtil;
+import org.eclipse.wst.common.project.facet.core.util.internal.MiscUtil;
 
 /**
  * Used for configuring and then installing a library via the Library Provider Framework.
@@ -244,7 +244,7 @@ public final class LibraryInstallDelegate
             throw new IllegalArgumentException();
         }
         
-        if( ! equal( this.selectedProvider, provider ) )
+        if( ! MiscUtil.equal( this.selectedProvider, provider ) )
         {
             final ILibraryProvider oldSelectedProvider = this.selectedProvider;
             
@@ -315,21 +315,16 @@ public final class LibraryInstallDelegate
     public synchronized void setEnablementContextVariable( final String name,
                                                            final Object value )
     {
-        final Object currentValue = this.customEnablementContextVariables.get( name );
-        
-        if( ! equal( currentValue, value ) )
+        if( value == null )
         {
-            if( value == null )
-            {
-                this.customEnablementContextVariables.remove( name );
-            }
-            else
-            {
-                this.customEnablementContextVariables.put( name, value );
-            }
-            
-            refresh();
+            this.customEnablementContextVariables.remove( name );
         }
+        else
+        {
+            this.customEnablementContextVariables.put( name, value );
+        }
+        
+        refresh();
     }
     
     /**
@@ -435,7 +430,7 @@ public final class LibraryInstallDelegate
         
         notifyListeners( PROP_AVAILABLE_PROVIDERS, oldProviders, this.providersReadOnly );
 
-        if( ! equal( oldSelectedProvider, this.selectedProvider ) )
+        if( ! MiscUtil.equal( oldSelectedProvider, this.selectedProvider ) )
         {
             notifyListeners( PROP_SELECTED_PROVIDER, oldSelectedProvider, this.selectedProvider );
         }
