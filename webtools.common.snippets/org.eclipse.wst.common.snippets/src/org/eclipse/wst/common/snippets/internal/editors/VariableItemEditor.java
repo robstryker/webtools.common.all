@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -355,6 +355,7 @@ public class VariableItemEditor implements ISnippetEditor {
 
 		GridData contentData = new GridData(GridData.FILL_BOTH);
 		contentData.heightHint = parent.getDisplay().getClientArea().height / 5;
+		contentData.widthHint = parent.getDisplay().getClientArea().height / 3;
 		content.setLayoutData(contentData);
 		content.setFont(org.eclipse.jface.resource.JFaceResources.getTextFont());
 		content.setHorizontalPixel(2);
