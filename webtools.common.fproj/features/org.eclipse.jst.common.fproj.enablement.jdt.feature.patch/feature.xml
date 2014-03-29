@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.jst.common.fproj.enablement.jdt.feature.patch"
       label="%featureName"
-      version="3.2.5.qualifier"
+      version="3.5.2.qualifier"
       provider-name="%providerName">
 
    <description>
@@ -18,7 +18,14 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.jst.common.fproj.enablement.jdt" version="3.2.2.v201008170019-377AB8s73533J5J759F " patch="true"/>
+      <import feature="org.eclipse.jst.common.fproj.enablement.jdt" version="3.4.0.v201108231500-377DG8s73543J5H6D66" patch="true"/>
    </requires>
+
+   <plugin
+         id="org.eclipse.jst.common.project.facet.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
