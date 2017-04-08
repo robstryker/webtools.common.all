@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<plugin>
+
+  <extension point="org.eclipse.core.runtime.adapters">
+    <factory 
+      class="org.eclipse.jst.common.project.facet.core.internal.RuntimeClasspathProvider$Factory" 
+      adaptableType="org.eclipse.wst.common.project.facet.core.runtime.IRuntime">
+      <adapter type="org.eclipse.jst.common.project.facet.core.IClasspathProvider"/>
+    </factory>
+  </extension>
+
+  <extension point="org.eclipse.wst.common.project.facet.core.runtimeBridges">
+    <bridge
+      id="org.eclipse.jst.common.project.facet.core.JavaRuntimeBridge"
+      class="org.eclipse.jst.common.project.facet.core.internal.JavaRuntimeBridge"/>
+  </extension>
+  
+  <extension point="org.eclipse.wst.common.project.facet.core.runtimes">
+  
+    <runtime-component-type id="standard.jre"/>
+    <runtime-component-version type="standard.jre" version="1.3"/>
+    <runtime-component-version type="standard.jre" version="1.4"/>
+    <runtime-component-version type="standard.jre" version="5.0"/>
+    <runtime-component-version type="standard.jre" version="6.0"/>
+
+    <supported>
+      <facet id="jst.java" version="1.3"/>
+      <runtime-component id="standard.jre" version="[1.3"/>
+    </supported>
+
+    <supported>
+      <facet id="jst.java" version="1.4"/>
+      <runtime-component id="standard.jre" version="[1.4"/>
+    </supported>
+
+    <supported>
+      <facet id="jst.java" version="5.0"/>
+      <runtime-component id="standard.jre" version="[5.0"/>
+    </supported>
+
+    <supported>
+      <facet id="jst.java" version="6.0"/>
+      <runtime-component id="standard.jre" version="[6.0"/>
+    </supported>
+    
+    <adapter>
+      <runtime-component id="standard.jre"/>
+      <factory class="org.eclipse.jst.common.project.facet.core.internal.StandardJreClasspathProvider$Factory"/>
+      <type class="org.eclipse.jst.common.project.facet.core.IClasspathProvider"/>
+    </adapter>
+
+    <adapter>
+      <runtime-component id="standard.jre"/>
+      <factory class="org.eclipse.jst.common.project.facet.core.internal.StandardJreComponentLabelProvider$Factory"/>
+      <type class="org.eclipse.wst.common.project.facet.ui.IRuntimeComponentLabelProvider"/>
+    </adapter>
+
+  </extension>
+
+  <extension point="org.eclipse.wst.common.project.facet.ui.images">
+    <image runtime-component-type="standard.jre"
+       path="images/standard-jre-component.gif"/>
+  </extension>
+  
+  <extension point="org.eclipse.wst.common.project.facet.core.facets">
+  
+    <project-facet id="jst.java">
+      <label>%jstJavaFacetLabel</label>
+      <description>%jstJavaFacetDescription</description>
+      <default-version provider="org.eclipse.jst.common.project.facet.core.internal.JavaFacetDefaultVersionProvider"/>
+    </project-facet>
+
+    <project-facet-version facet="jst.java" version="1.3">
+      <constraint>
+        <conflicts facet="wst.web"/>
+      </constraint>
+    </project-facet-version>
+
+    <project-facet-version facet="jst.java" version="1.4">
+      <constraint>
+        <conflicts facet="wst.web"/>
+      </constraint>
+    </project-facet-version>
+
+    <project-facet-version facet="jst.java" version="5.0">
+      <constraint>
+        <conflicts facet="wst.web"/>
+      </constraint>
+    </project-facet-version>
+
+    <project-facet-version facet="jst.java" version="6.0">
+      <constraint>
+        <conflicts facet="wst.web"/>
+      </constraint>
+    </project-facet-version>
+
+    <action facet="jst.java" type="install">
+      <delegate class="org.eclipse.jst.common.project.facet.core.internal.JavaFacetInstallDelegate"/>
+      <config-factory class="org.eclipse.jst.common.project.facet.core.internal.JavaFacetInstallConfigFactory"/>
+    </action>
+
+    <action facet="jst.java" type="version-change">
+      <delegate class="org.eclipse.jst.common.project.facet.core.internal.JavaFacetVersionChangeDelegate"/>
+    </action>
+
+  </extension>
+  
+  <extension point="org.eclipse.wst.common.project.facet.ui.images">
+    <image facet="jst.java" path="images/java-face.gif"/>
+  </extension>
+  
+  <extension point="org.eclipse.wst.common.project.facet.core.listeners">
+     <listener
+       class="org.eclipse.jst.common.project.facet.core.internal.JavaFacetRuntimeChangedListener"
+       eventTypes="PRIMARY_RUNTIME_CHANGED"/>
+  </extension>
+  
+  <extension point="org.eclipse.wst.common.project.facet.core.validators">
+    <validator class="org.eclipse.jst.common.project.facet.core.internal.JavaFacetValidator">
+      <facet id="jst.java"/>
+    </validator>
+  </extension>    
+
+  <extension 
+    point="org.eclipse.core.resources.markers"
+    id="javaVersionMismatch"
+    name="%javaVersionMismatchMarkerName">
+    <super type="org.eclipse.wst.common.project.facet.core.validation.marker"/>
+    <attribute name="facetVersion"/>
+    <attribute name="compilerLevel"/>
+    <persistent value="true"/>
+  </extension>
+  
+  <extension
+    point="org.eclipse.ui.ide.markerResolution">
+	<markerResolutionGenerator
+      markerType="org.eclipse.jst.common.project.facet.core.javaVersionMismatch"
+      class="org.eclipse.jst.common.project.facet.core.internal.JavaVersionMismatchMarkerResolutions">
+    </markerResolutionGenerator>
+  </extension>
+  
+  
+</plugin>
