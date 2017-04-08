@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.wst.common_tests.feature"
+      label="WST Common Feature Tests"
+      version="1.0.1.qualifier"
+      provider-name="Eclipse.org">
+
+   <description>
+      %description
+   </description>
+
+   <license url="license.html">
+      %license
+   </license>
+
+   <url>
+      <update label="Web Tools Platform (WTP) Updates" url="http://download.eclipse.org/webtools/updates/"/>
+   </url>
+
+   <requires>
+      <import feature="org.eclipse.wst.common_ui.feature" version="1.0.0"/>
+      <import feature="org.eclipse.test" version="3.1.0"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.wst.common.tests"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.wst.common.tests.collector"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.wst.common.tests.performance"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.wst.common.tests.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.wst.common.snippets.tests"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.wst.internet.cache.tests"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+</feature>
