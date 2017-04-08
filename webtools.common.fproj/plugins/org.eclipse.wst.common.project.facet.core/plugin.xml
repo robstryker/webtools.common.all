@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<plugin>
+
+  <extension-point 
+    id="facets"
+    name="Project Facets Extension Point"
+    schema="schemas/facets.exsd"/>
+
+  <extension-point 
+    id="runtimes"
+    name="Runtimes Extension Point"
+    schema="schemas/runtimes.exsd"/>
+  
+  <extension
+    id="nature"
+    point="org.eclipse.core.resources.natures">
+    <runtime>
+      <run class="org.eclipse.wst.common.project.facet.core.internal.FacetedProjectNature"/>
+    </runtime>
+  </extension>
+
+  <extension point="org.eclipse.core.runtime.adapters">
+    <factory 
+      class="org.eclipse.wst.common.project.facet.core.runtime.classpath.internal.RuntimeClasspathProvider$Factory" 
+      adaptableType="org.eclipse.wst.common.project.facet.core.runtime.IRuntime">
+      <adapter type="org.eclipse.wst.common.project.facet.core.runtime.classpath.IClasspathProvider"/>
+    </factory>
+  </extension>
+
+</plugin>
