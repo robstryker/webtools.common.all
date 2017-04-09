@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="org.eclipse.wst.common.snippets.tests"
+   name="org.eclipse.wst.common.snippets.tests"
+   version="1.0.0"
+   provider-name="Eclipse.org"
+   class="org.eclipse.wst.common.snippets.tests.TestsPlugin">
+   <runtime>
+      <library name="snippetstests.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+
+   <requires>
+      <import plugin="org.junit"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.text"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.wst.common.snippets"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
+   </requires>
+
+	<!--======================================================================================-->
+	<!-- Snippet View contributions                                                           -->
+	<!--======================================================================================-->
+	<extension
+		point="org.eclipse.wst.common.snippets.SnippetContributions">
+		<category
+			label="%unittest_category_label"
+			id="org.eclipse.wst.common.snippets.tests.category0"
+			contenttypes="org.eclipse.core.runtime.text">
+			<item
+				label="%unittest_item0_label"
+				id="org.eclipse.wst.common.snippets.tests.item0">
+				<content>%unittest_item0_content</content>
+			</item>
+			<item
+				label="%unittest_item1_label"
+				id="org.eclipse.wst.common.snippets.tests.item1">
+				<content>%unittest_item1_content</content>
+				<variable
+					description="%unittest_item1_varA"
+					id="variableA" />
+				<variable
+					description="%unittest_item1_varB"
+					id="variableB"
+					default="bfoo" />
+			</item>
+		</category>
+	</extension>
+
+</plugin>
