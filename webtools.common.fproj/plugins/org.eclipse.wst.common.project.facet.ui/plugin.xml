@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<plugin>
+
+  <extension-point 
+    id="wizard"
+    name="Project Facet Wizard Pages Extension Point"
+    schema="schemas/wizard-pages.exsd"/>
+
+  <extension-point 
+    id="images"
+    name="Project Facet Images Extension Point"
+    schema="schemas/images.exsd"/>
+
+  <extension point="org.eclipse.core.runtime.adapters">
+    <factory 
+      class="org.eclipse.wst.common.project.facet.ui.internal.DecorationsProvider$Factory" 
+      adaptableType="org.eclipse.wst.common.project.facet.core.IProjectFacet">
+      <adapter type="org.eclipse.wst.common.project.facet.ui.IDecorationsProvider"/>
+    </factory>
+  </extension>
+
+  <extension point="org.eclipse.core.runtime.adapters">
+    <factory 
+      class="org.eclipse.wst.common.project.facet.ui.internal.DecorationsProvider$Factory" 
+      adaptableType="org.eclipse.wst.common.project.facet.core.ICategory">
+      <adapter type="org.eclipse.wst.common.project.facet.ui.IDecorationsProvider"/>
+    </factory>
+  </extension>
+
+  <extension point="org.eclipse.core.runtime.adapters">
+    <factory 
+      class="org.eclipse.wst.common.project.facet.ui.internal.DecorationsProvider$Factory" 
+      adaptableType="org.eclipse.wst.common.project.facet.core.runtime.IRuntimeComponentType">
+      <adapter type="org.eclipse.wst.common.project.facet.ui.IDecorationsProvider"/>
+    </factory>
+  </extension>
+  
+  <extension point="org.eclipse.core.runtime.adapters">
+    <factory 
+      class="org.eclipse.wst.common.project.facet.ui.internal.FacetedProjectActionFilter$Factory" 
+      adaptableType="org.eclipse.wst.common.project.facet.core.IFacetedProject">
+      <adapter type="org.eclipse.ui.IActionFilter"/>
+    </factory>
+  </extension>
+    
+  <extension point="org.eclipse.ui.propertyPages">
+    <page
+      adaptable="true"
+      class="org.eclipse.wst.common.project.facet.ui.internal.FacetsPropertyPage"
+      id="org.eclipse.wst.common.project.facet.ui.internal.FacetsPropertyPage"
+      name="%project.facets"
+      objectClass="org.eclipse.core.resources.IProject">
+      <filter
+        name="nature"
+        value="org.eclipse.wst.common.project.facet.core.nature">
+      </filter>
+    </page>
+  </extension>
+  
+  <extension point="org.eclipse.wst.common.project.facet.core.facets">
+  
+    <project-facet id="a">
+      <label>A</label>
+    </project-facet>
+
+    <project-facet-version facet="a" version="1.0"/>
+    
+    <project-facet id="b">
+      <label>B</label>
+    </project-facet>
+
+    <project-facet-version facet="b" version="1.0"/>
+    
+    <project-facet id="c">
+      <label>C</label>
+    </project-facet>
+
+    <project-facet-version facet="c" version="1.0"/>
+    
+    <project-facet id="d">
+      <label>D</label>
+    </project-facet>
+
+    <project-facet-version facet="d" version="1.0"/>
+    
+    <project-facet id="e">
+      <label>E</label>
+    </project-facet>
+
+    <project-facet-version facet="e" version="1.0"/>
+    
+    <project-facet id="f">
+      <label>F</label>
+    </project-facet>
+
+    <project-facet-version facet="f" version="1.0"/>
+    
+    <project-facet id="g">
+      <label>G</label>
+    </project-facet>
+
+    <project-facet-version facet="g" version="1.0"/>
+    
+    <project-facet id="h">
+      <label>h</label>
+    </project-facet>
+
+    <project-facet-version facet="h" version="1.0"/>
+    
+    <project-facet id="i">
+      <label>I</label>
+    </project-facet>
+
+    <project-facet-version facet="i" version="1.0"/>
+    
+    <project-facet id="j">
+      <label>J</label>
+    </project-facet>
+
+    <project-facet-version facet="j" version="1.0"/>
+    
+    <project-facet id="k">
+      <label>K</label>
+    </project-facet>
+
+    <project-facet-version facet="k" version="1.0"/>
+    
+    <project-facet id="l">
+      <label>L</label>
+    </project-facet>
+
+    <project-facet-version facet="l" version="1.0"/>
+    
+    <project-facet id="m">
+      <label>m</label>
+    </project-facet>
+
+    <project-facet-version facet="m" version="1.0"/>
+    
+    <project-facet id="n">
+      <label>n</label>
+    </project-facet>
+
+    <project-facet-version facet="n" version="1.0"/>
+    
+    <project-facet id="o">
+      <label>O</label>
+    </project-facet>
+
+    <project-facet-version facet="o" version="1.0"/>
+    
+    <project-facet id="p">
+      <label>p</label>
+    </project-facet>
+
+    <project-facet-version facet="p" version="1.0"/>
+    
+    <project-facet id="q">
+      <label>q</label>
+    </project-facet>
+
+    <project-facet-version facet="q" version="1.0"/>
+    
+    <project-facet id="r">
+      <label>r</label>
+    </project-facet>
+
+    <project-facet-version facet="r" version="1.0"/>
+    
+    <project-facet id="s">
+      <label>S</label>
+    </project-facet>
+
+    <project-facet-version facet="s" version="1.0"/>
+    
+  </extension>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  
+
+</plugin>
