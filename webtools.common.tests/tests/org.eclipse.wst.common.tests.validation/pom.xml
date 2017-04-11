@@ -29,23 +29,4 @@
     <testSuite>${project.artifactId}</testSuite>
     <testClass>org.eclipse.wst.validation.tests.testcase.ValidationTestSuite</testClass>
   </properties>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>tycho-surefire-plugin</artifactId>
-        <version>${tycho.version}</version>
-        <configuration>
-          <dependencies>
-            <dependency>
-              <type>p2-installable-unit</type>
-              <groupId>org.eclipse.webtools.common</groupId>
-              <artifactId>org.eclipse.jst.common.project.facet.core</artifactId>
-            </dependency>
-          </dependencies>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>
