@@ -202,23 +202,24 @@ public class ComponentImplManager implements ISynchronizerExtender{
 	}
 
 	public IVirtualComponent createComponent(IProject project) {
-		IVirtualComponent retVal = null;
-		// acquire the lock that StructureEdit will need already, to prevent others from locking that before calling createComponent() - see bug 508685
+		return createComponent(project, true);
+	}
+
+	public IVirtualComponent createComponent(IProject project, boolean checkSettings) {
 		ILock lock = EMFWorkbenchEditContextFactory.getProjectLockObject(project);
 		try{
 			if(null != lock){
 				lock.acquire();
 			}
-			retVal = createComponent(project, true);
+			return createComponentSynchronously(project, checkSettings);
 		} finally{
 			if(null != lock){
 				lock.release();
 			}
 		}
-		return retVal;
 	}
 
-	public synchronized IVirtualComponent createComponent(IProject project, boolean checkSettings) {
+	private synchronized IVirtualComponent createComponentSynchronously(IProject project, boolean checkSettings) {
 		try {
 			IVirtualComponent component = ComponentCacheManager.instance().getComponent(project);
 			if(component != null) {
@@ -248,11 +249,9 @@ public class ComponentImplManager implements ISynchronizerExtender{
 			}
 		}
 		IVirtualComponent component = new VirtualComponent(project, new Path("/")); //$NON-NLS-1$
-		if(component != null) {
-			ComponentCacheManager.instance().setComponentImplFactory(project, null);
-			ComponentCacheManager.instance().setComponent(project, component);
-			registerListener(project);
-		}
+		ComponentCacheManager.instance().setComponentImplFactory(project, null);
+		ComponentCacheManager.instance().setComponent(project, component);
+		registerListener(project);
 
 		return component;
 	}
