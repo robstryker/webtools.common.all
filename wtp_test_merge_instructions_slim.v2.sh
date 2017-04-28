@@ -55,6 +55,9 @@
 
 START_TIME=`date +%s`
 
+# lets forget this is a git repo... it's just a folder with some patches now
+rm -rf .git
+
 # set some vars, users should change this
 NEW_REPO_NAME="webtools.common.all"
 README_MD_CONTENT="webtools commons in one repository"
@@ -76,6 +79,10 @@ postClone() {
     cd ./webtools.common.tests/
     git branch R3_8_maintenance
     cd ../
+}
+
+applyPatches() {
+    echo "Hello"
 }
 
 
@@ -327,6 +334,9 @@ git branch -D test
 
 #git push $repo --tags
 
+
+# apply some patches
+applyPatches
 
 END_TIME=`date +%s`
 EXEC_TIME=$((END_TIME-START_TIME))
